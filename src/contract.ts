@@ -1,3 +1,6 @@
+export type PassId = "language" | "editorial";
+export type Severity = "info" | "warning" | "error";
+
 export interface ReviewRequest {
     file: string;
     content: string;
@@ -10,9 +13,9 @@ export interface Range {
 }
 
 export interface Finding {
-    passId: string;
+    passId: PassId;
     range: Range;
-    severity: "info" | "warning" | "error";
+    severity: Severity;
     category: string;
     message: string;
     suggestion?: string;

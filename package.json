@@ -10,6 +10,8 @@
     "typescript": "^7"
   },
   "dependencies": {
+    "@types/diff": "^8.0.0",
+    "diff": "^9.0.0",
     "remark-mdx": "^3.1.1",
     "remark-parse": "^11.0.0",
     "unified": "^11.0.5"
