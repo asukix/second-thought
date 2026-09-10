@@ -25,7 +25,7 @@ if (!key) {
 }
 
 const llm = new GeminiLlmClient(key);
-const result = await review(file, source, llm, 5);
+const result = await review(file, source, llm, 8);
 
 console.log(`\n${result.findings.length} finding (${result.file}):\n`);
 for (const f of result.findings) {

@@ -3,13 +3,17 @@ import type { Finding } from "../contract";
 import { segment } from "../segmenter";
 
 const SYSTEM_PROMPT =
-  "You are an English proofreader for technical blog prose. " +
-  "Find grammar, punctuation and phrasing issues. For each issue return the exact " +
-  "original substring to replace and its correction. " +
-  "Copy 'original' VERBATIM from the input (exact characters, incl. punctuation and " +
-  "Markdown) so it can be located by exact string match. Preserve Markdown syntax. " +
+  "You are a STRICT English proofreader for a technical blog. " +
+  "Fix ONLY mechanical errors: spelling, punctuation, capitalization, " +
+  "subject-verb agreement, verb tense mistakes, and missing or incorrect articles. " +
+  "Do NOT rephrase, reword, restructure, or change word choice for style, tone, " +
+  "concision or 'naturalness'. If a sentence is grammatically correct, leave it " +
+  "EXACTLY as is, even if you would phrase it differently. Preserve the author's " +
+  "wording and voice, and preserve Markdown syntax (**, `, #). " +
+  "For each genuine mechanical error, return the exact original substring and its " +
+  'correction. Copy "original" VERBATIM so it can be located by exact string match. ' +
   'Return ONLY a JSON array of {"original","corrected","category","message"}. ' +
-  "Empty array if no issues. No prose, no code fences.";
+  "Empty array if there are no mechanical errors. No prose, no code fences.";
 
 function extractJson(raw: string): string {
   const fenced = raw.match(/```(?:json)?\s*([\s\S]*?)```/);
