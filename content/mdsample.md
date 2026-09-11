@@ -11,7 +11,7 @@ Currently, it is very easy to get information and answers. This is useful when w
 When I am learning I like to slow down. I am curious and I like asking questions. Everyone likes asking questions because we like to explore. If you slow down to ask questions, you also give yourself thinking space, and let yourself **enjoy thinking**. Because when you find answers you will have time to enjoy the way, not just get the goal. This is a wonderful process where you can be yourself, where you can ask questions like a child and your thinking space can be your own playground that you can reach from anywhere without any tool.
 
 ## Your mental model
-When I am thinking about a topic I like to change the base from the answers to the problem space. Every solution was born because someone wanted to solve a problem. If you understand the problem you will be able to get your own answers and build your own solution. With this you will have your own mental model. When you have your mental model you will be able to create your answers any time. What's more, you'll be able to create better answers later. In this process creation is quite easy and destruction is hard.
+When I am thinking about a topic I like to change the base from the answers to the problem space. Every solution was born because someone wanted to solve a problm. If you understand the problem you will be able to get your own answers and build your own solution. With this you will have your own mental model. When you have your mental model you will be able to create your answers any time. What's more, you'll be able to create better answers later. In this process creation is quite easy and destruction is hard.
 
 **Article Note:** I will write a separate article about destruction
 
