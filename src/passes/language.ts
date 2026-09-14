@@ -1,6 +1,7 @@
 import type { LlmClient } from "../ports/llm";
 import type { Finding } from "../contract";
 import { segment } from "../segmenter";
+import { extractJson } from "./util";
 
 const SYSTEM_PROMPT =
   "You are a STRICT English proofreader for a technical blog. " +
@@ -14,11 +15,6 @@ const SYSTEM_PROMPT =
   'correction. Copy "original" VERBATIM so it can be located by exact string match. ' +
   'Return ONLY a JSON array of {"original","corrected","category","message"}. ' +
   "Empty array if there are no mechanical errors. No prose, no code fences.";
-
-function extractJson(raw: string): string {
-  const fenced = raw.match(/```(?:json)?\s*([\s\S]*?)```/);
-  return (fenced ? fenced[1] : raw).trim();
-}
 
 export async function languagePass(
   source: string,

@@ -1,20 +1,24 @@
-import { languagePass } from "./passes/language";
 import { applyEdits, type Edit } from "./apply";
 import { makeDiff } from "./diff";
 import type { LlmClient } from "./ports/llm";
-import type { ReviewResult } from "./contract";
+import type { ReviewPass } from "./passes/pass";
+import type { ReviewResult, Finding } from "./contract";
 
 export async function review(
   file: string,
   source: string,
   llm: LlmClient,
+  passes: ReviewPass[],
   limit?: number
 ): Promise<ReviewResult> {
   if (source.trim() === "") {
     throw new Error("review: üres bemenet.");
   }
 
-  const findings = await languagePass(source, llm, limit);
+  const findings: Finding[] = [];
+  for (const pass of passes) {
+    findings.push(...(await pass(source, llm, limit)));
+  }
 
   const edits: Edit[] = findings
     .filter((f) => f.suggestion !== undefined)
