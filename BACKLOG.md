@@ -5,7 +5,7 @@ Munka-lista. Pipáld/húzd át, amit kész, és írj hozzá bármit. Szabadon sz
 ## Tesztek (cél: piramis a mentori sessionig)
 - [x] Unit: applyEdits (drift, duplikátum, insert/delete, no-op)
 - [x] Unit: segment round-trip (próza kijön, frontmatter/kód sértetlen, range-ek)
-- [ ] Unit: extractJson (kerítéses vs. sima JSON)
+- [x] Unit: extractJson (kerítéses vs. sima JSON)
 - [ ] Unit: passzok parse/pozíció-logika FakeLlmClienttel
 - [ ] Integráció: review() fake passzal → teljes lánc → ReviewResult
 - [ ] E2E: CLI spawn egy fixture-cikken (kimenet + exit-kód)
