@@ -6,9 +6,9 @@ Munka-lista. Pipáld/húzd át, amit kész, és írj hozzá bármit. Szabadon sz
 - [x] Unit: applyEdits (drift, duplikátum, insert/delete, no-op)
 - [x] Unit: segment round-trip (próza kijön, frontmatter/kód sértetlen, range-ek)
 - [x] Unit: extractJson (kerítéses vs. sima JSON)
-- [ ] Unit: passzok parse/pozíció-logika FakeLlmClienttel
-- [ ] Integráció: review() fake passzal → teljes lánc → ReviewResult
-- [ ] E2E: CLI spawn egy fixture-cikken (kimenet + exit-kód)
+- [x] Unit: passzok parse/pozíció-logika FakeLlmClienttel
+- [x] Integráció: review() fake passzal → teljes lánc → ReviewResult
+- [x] E2E: CLI spawn egy fixture-cikken (kimenet + exit-kód)
 - [ ] E2E (opc.): élő-LLM smoke, env-flag mögött
 
 ## Képességek
