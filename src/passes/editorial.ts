@@ -2,6 +2,7 @@ import type { LlmClient } from "../ports/llm";
 import type { Finding } from "../contract";
 import { segment } from "../segmenter";
 import { extractJson } from "./util";
+import { Category } from "../constants";
 
 const SYSTEM_PROMPT =
   "You are an editorial reviewer for a technical blog on iOS and software architecture. " +
@@ -35,10 +36,10 @@ export async function editorialPass(
     items = JSON.parse(extractJson(raw));
   } catch (err) {
     return [{
-      passId: "editorial",
+      passId: Category.Editorial,
       range: { start: 0, end: 0 },
       severity: "error",
-      category: "parse-error",
+      category: Category.ParseError,
       message: `Nem sikerült feldolgozni az LLM válaszát: ${err}`,
     }];
   }
@@ -50,10 +51,10 @@ export async function editorialPass(
       if (at !== -1) range = { start: at, end: at + item.anchor.length };
     }
     return {
-      passId: "editorial",
+      passId: Category.Editorial,
       range,
       severity: "info",             // tanácsadó
-      category: item.category || "editorial",
+      category: item.category || Category.Editorial,
       message: item.message,
     };
   });

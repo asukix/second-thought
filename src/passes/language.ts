@@ -2,7 +2,7 @@ import type { LlmClient } from "../ports/llm";
 import type { Finding } from "../contract";
 import { segment } from "../segmenter";
 import { extractJson } from "./util";
-import { PARSE_ERROR } from "../constants";
+import { Category } from "../constants";
 
 const SYSTEM_PROMPT =
   "You are a STRICT English proofreader for a technical blog. " +
@@ -48,20 +48,20 @@ export async function languagePass(
         const end = start + item.original.length;
 
         findings.push({
-          passId: "language",
+          passId: Category.Language,
           range: { start, end },
           severity: "warning",
-          category: item.category || "language",
+          category: item.category || Category.Language,
           message: item.message,
           suggestion: item.corrected,
         });
       }
     } catch (err) {
       findings.push({
-        passId: "language",
+        passId: Category.Language,
         range: seg.range,
         severity: "error",
-        category: PARSE_ERROR,
+        category: Category.ParseError,
         message: `Nem sikerült feldolgozni az LLM válaszát: ${err}`,
       });
     }

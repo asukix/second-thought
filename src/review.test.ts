@@ -3,11 +3,12 @@ import { review } from "./review";
 import type { ReviewPass } from "./passes/pass";
 import type { Finding } from "./contract";
 import type { LlmClient } from "./ports/llm";
+import { Category } from "./constants";
 
 const dummyLlm: LlmClient = { async complete() { return ""; } };
 
 const editFinding: Finding = {
-  passId: "editorial",
+  passId: Category.Editorial,
   range: { start: 0, end: 0 },
   severity: "info",
   category: "structure",
@@ -22,7 +23,7 @@ describe("review", () => {
   test("collects findings from 2 passes, uses and builds a diff from suggestions", async () => {
     const source = "teh cat";
     const langFinding: Finding = {
-      passId: "language",
+      passId: Category.Language,
       range: { start: 0, end: 3 }, // "teh"
       severity: "warning",
       category: "spelling",
@@ -37,7 +38,7 @@ describe("review", () => {
 
     expect(result.file).toBe("a.mdx");
     expect(result.findings).toHaveLength(2);
-    expect(result.findings.map((f) => f.passId).sort()).toEqual(["editorial", "language"]);
+    expect(result.findings.map((f) => f.passId).sort()).toEqual([Category.Editorial, Category.Language]);
     expect(result.diff).toBeDefined();
     expect(result.diff).toContain("the cat");
   });
