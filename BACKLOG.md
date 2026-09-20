@@ -9,7 +9,7 @@ Munka-lista. Pipáld/húzd át, amit kész, és írj hozzá bármit. Szabadon sz
 - [x] Unit: passzok parse/pozíció-logika FakeLlmClienttel
 - [x] Integráció: review() fake passzal → teljes lánc → ReviewResult
 - [x] E2E: CLI spawn egy fixture-cikken (kimenet + exit-kód)
-- [ ] E2E (opc.): élő-LLM smoke, env-flag mögött
+- [x] E2E (opc.): élő-LLM smoke, env-flag mögött
 
 ## Képességek
 - [ ] Technical fact-check persona (advisory + bizonyíték: snippet/szimbólum/groundingos URL)

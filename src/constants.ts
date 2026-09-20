@@ -4,4 +4,5 @@ export const Category = {
   Editorial: "editorial",
 } as const;
 
+
 export type CategoryId = (typeof Category)[keyof typeof Category];

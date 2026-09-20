@@ -13,13 +13,11 @@ describe("live LLM smoke (opt-in: LEKTOR_LIVE=1)", () => {
 
     const result = await review("smoke.mdx", "teh cat and the dog.", llm, [languagePass]);
 
-    // 1) jön válasz egyáltalán: findings egy tömb, nincs crash
     expect(Array.isArray(result.findings)).toBe(true);
 
-    // 2) a nyilvánvaló "teh" hibát elkapja és javítja
     const caughtTeh = result.findings.some(
       (f) => f.passId === "language" && f.suggestion?.includes("the")
     );
     expect(caughtTeh).toBe(true);
-  }, 20000); // valódi hálózati hívás → nagyobb timeout
+  }, 20000);  // wait for LLM response
 });
