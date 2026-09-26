@@ -23,6 +23,8 @@ Munka-lista. Pipáld/húzd át, amit kész, és írj hozzá bármit. Szabadon sz
 - [ ] JSON kimeneti mód a CLI-nek
 - [ ] Átfedő range-ek kezelése az apply-ban
 - [ ] Frontmatterbe ágyazott próza
+- [ ] Frontmatter kijelölt mezőinek (title/description/alt) óvatos lektorálása — a legsűrűbb nyelvi hibák ott ülnek (dogfood-tanulság)
+- [ ] Szegmentáló: csupasz HTML-tag tolerancia (pl. lezáratlan `<br>`) — most parse-error findinggé szelídül, de a próza elérhetetlen (dogfood: bit-004)
 
 ## Terjesztés / higiénia
 - [ ] git-higiénia: vscode-extension/dist/ + node_modules/ gitignore

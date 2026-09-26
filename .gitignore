@@ -5,6 +5,7 @@ node_modules
 out
 dist
 *.tgz
+dogfood-out/
 
 # code coverage
 coverage
