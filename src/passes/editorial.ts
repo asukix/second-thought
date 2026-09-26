@@ -22,12 +22,10 @@ const SYSTEM_PROMPT =
 
 export async function editorialPass(
   source: string,
-  llm: LlmClient,
-  limit?: number
+  llm: LlmClient
 ): Promise<Finding[]> {
   const segments = segment(source);
-  const targets = limit ? segments.slice(0, limit) : segments;
-  const prose = targets.map((s) => s.text).join("\n\n");
+  const prose = segments.map((s) => s.text).join("\n\n");
 
   const raw = await llm.complete(SYSTEM_PROMPT, prose);
 
@@ -53,7 +51,7 @@ export async function editorialPass(
     return {
       passId: Category.Editorial,
       range,
-      severity: "info",             // tanácsadó
+      severity: "info",
       category: item.category || Category.Editorial,
       message: item.message,
     };

@@ -17,7 +17,7 @@ async function main() {
   if (!key) throw new Error(errorMessages.missingKey);
 
   const llm = new GeminiLlmClient(key);
-  const result = await review(file, source, llm, [languagePass, editorialPass], 8);
+  const result = await review(file, source, llm, [languagePass, editorialPass]);
 
   console.log(`\n${result.findings.length} finding (${result.file}):\n`);
   for (const f of result.findings) {

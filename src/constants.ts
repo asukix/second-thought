@@ -2,6 +2,7 @@ export const Category = {
   ParseError: "parse-error",
   Language: "language",
   Editorial: "editorial",
+  System: "system",
 } as const;
 
 

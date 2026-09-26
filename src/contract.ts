@@ -1,4 +1,4 @@
-export type PassId = "language" | "editorial";
+export type PassId = "language" | "editorial" | "system";
 export type Severity = "info" | "warning" | "error";
 
 export interface ReviewRequest {

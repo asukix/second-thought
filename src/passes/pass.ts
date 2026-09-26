@@ -3,6 +3,5 @@ import type { Finding } from "../contract";
 
 export type ReviewPass = (
   source: string,
-  llm: LlmClient,
-  limit?: number
+  llm: LlmClient
 ) => Promise<Finding[]>;

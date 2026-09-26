@@ -53,4 +53,15 @@ describe("review", () => {
   test("empty source throws", async () => {
     await expect(review("a.mdx", "   ", dummyLlm, [])).rejects.toThrow();
   });
+
+  test("unparsable source (unterminated <br>) → single system parse-error, does not throw", async () => {
+    const bad = "# Cím\n\nEgy bekezdés <br> benne lezáratlan taggel.\n";
+    const result = await review("bad.md", bad, dummyLlm, []);
+
+    expect(result.findings).toHaveLength(1);
+    expect(result.findings[0]!.passId).toBe("system");
+    expect(result.findings[0]!.category).toBe("parse-error");
+    expect(result.findings[0]!.severity).toBe("error");
+    expect(result.diff).toBeUndefined();
+  });
 });

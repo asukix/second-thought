@@ -19,17 +19,15 @@ const SYSTEM_PROMPT =
 
 export async function languagePass(
   source: string,
-  llm: LlmClient,
-  limit?: number
+  llm: LlmClient
 ): Promise<Finding[]> {
   if (source.trim() === "") {
     throw new Error("languagePass: üres bemenet.");
   }
   const segments = segment(source);
-  const targets = limit ? segments.slice(0, limit) : segments;
   const findings: Finding[] = [];
 
-    for (const seg of targets) {
+    for (const seg of segments) {
     try {
       const raw = await llm.complete(SYSTEM_PROMPT, seg.text);
       const items = JSON.parse(extractJson(raw)) as Array<{
