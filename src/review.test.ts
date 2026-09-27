@@ -64,4 +64,33 @@ describe("review", () => {
     expect(result.findings[0]!.severity).toBe("error");
     expect(result.diff).toBeUndefined();
   });
+
+  test("suggestion inside inline code is dropped; prose suggestion survives", async () => {
+    const source = "`let` can't be declared in a convenience init.";
+    expect(source.slice(15, 23)).toBe("declared"); // offset-check: "declared" is in prose, not in backticks
+
+    const intoCode: Finding = {
+      passId: Category.Language,
+      range: { start: 1, end: 4 }, // "let" inside backticks
+      severity: "warning",
+      category: "punctuation",
+      message: "add backticks",
+      suggestion: "`let`",
+    };
+    const inProse: Finding = {
+      passId: Category.Language,
+      range: { start: 15, end: 23 }, // "declared"
+      severity: "warning",
+      category: "wording",
+      message: "test",
+      suggestion: "defined",
+    };
+
+    const result = await review("a.md", source, dummyLlm, [fakePass([intoCode, inProse])]);
+
+    expect(result.findings).toHaveLength(1);
+    expect(result.findings[0]!.suggestion).toBe("defined");
+    expect(result.diff).toContain("defined");
+    expect(result.diff).not.toContain("``let``");
+  });
 });

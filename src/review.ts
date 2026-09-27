@@ -1,10 +1,10 @@
 import { applyEdits, type Edit } from "./apply";
 import { makeDiff } from "./diff";
-import { segment } from "./segmenter";
+import { protectedRanges, overlapsAny } from "./segmenter";
 import { Category } from "./constants";
 import type { LlmClient } from "./ports/llm";
 import type { ReviewPass } from "./passes/pass";
-import type { ReviewResult, Finding } from "./contract";
+import type { ReviewResult, Finding, Range } from "./contract";
 
 export async function review(
   file: string,
@@ -16,9 +16,11 @@ export async function review(
     throw new Error("review: üres bemenet.");
   }
 
+  let guarded: Range[];
+
   // Parse-guard
   try {
-    segment(source);
+    guarded = protectedRanges(source);
   } catch (err) {
     return {
       file,
@@ -41,12 +43,16 @@ export async function review(
     findings.push(...(await pass(source, llm)));
   }
 
-  const edits: Edit[] = findings
+  const safe = findings.filter(
+    (f) => f.suggestion === undefined || !overlapsAny(f.range, guarded)
+  );
+
+  const edits: Edit[] = safe
     .filter((f) => f.suggestion !== undefined)
     .map((f) => ({ range: f.range, replacement: f.suggestion! }));
 
   const diff =
     edits.length > 0 ? makeDiff(file, source, applyEdits(source, edits)) : undefined;
 
-  return { file, findings, diff };
+  return { file, findings: safe, diff };
 }

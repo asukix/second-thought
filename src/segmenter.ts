@@ -9,16 +9,30 @@ export interface Segment {
   text: string;
   range: Range;
 }
-
-// Ezeket tekintjük önálló review-egységnek.
 const BLOCK_TYPES = new Set(["paragraph", "heading"]);
 
-export function segment(source: string): Segment[] {
-  const tree = unified()
+const PROTECTED_TYPES = new Set([
+  "yaml",              // frontmatter
+  "code",
+  "inlineCode",
+  "mdxJsxFlowElement", // <Image />
+  "mdxJsxTextElement", // inline JSX
+  "mdxjsEsm",          // import / export
+  "mdxFlowExpression",
+  "mdxTextExpression",
+  "html",
+]);
+
+function parse(source: string) {
+  return unified()
     .use(remarkParse)
     .use(remarkFrontmatter)
     .use(remarkMdx)
     .parse(source);
+}
+
+export function segment(source: string): Segment[] {
+  const tree = parse(source);
 
   const segments: Segment[] = [];
 
@@ -27,14 +41,35 @@ export function segment(source: string): Segment[] {
       const start = node.position.start.offset;
       const end = node.position.end.offset;
       segments.push({
-        text: source.slice(start, end),   // a blokk NYERS forrásszövege
+        text: source.slice(start, end),
         range: { start, end },
       });
-      return; // ← ne menjünk a blokkon BELÜLRE, már az egészet elvettük
+      return;
     }
     for (const child of node.children ?? []) walk(child);
   }
 
   walk(tree);
   return segments;
+}
+
+export function protectedRanges(source: string): Range[] {
+  const ranges: Range[] = [];
+
+  function walk(node: any) {
+    if (PROTECTED_TYPES.has(node.type) && node.position) {
+      const start = node.position.start.offset;
+      const end = node.position.end.offset;
+      ranges.push({ start: start, end: end});
+      return;
+    }
+    for (const child of node.children ?? []) walk(child);
+  }
+
+  walk(parse(source));
+  return ranges;
+}
+
+export function overlapsAny(range: Range, ranges: Range[]): boolean {
+  return ranges.some((p) => range.start < p.end && p.start < range.end);
 }
