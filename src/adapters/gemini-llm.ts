@@ -15,7 +15,7 @@ function suggestedDelayMs(body: string): number | undefined {
 }
 
 export class GeminiLlmClient implements LlmClient {
-  constructor(private apiKey: string) {}
+  constructor(private apiKey: string) { }
 
   async complete(systemPrompt: string, userText: string): Promise<string> {
     let lastError = "";
@@ -51,10 +51,16 @@ export class GeminiLlmClient implements LlmClient {
       const transient = res.status === 429 || res.status >= 500;
       if (!transient || attempt === MAX_RETRIES) break;
 
-      const backoff = Math.min(
+      const backoff1 = Math.min(
         suggestedDelayMs(body) ?? BASE_BACKOFF_MS * 2 ** attempt,
         MAX_BACKOFF_MS
       );
+
+      const backoff = Math.min(
+        Math.max(suggestedDelayMs(body) ?? 0, BASE_BACKOFF_MS * 2 ** attempt),
+        MAX_BACKOFF_MS
+      );
+
       await sleep(backoff);
     }
 

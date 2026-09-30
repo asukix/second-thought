@@ -78,7 +78,7 @@ test("permanent error (400) does not retry", async () => {
 });
 
 
-test("hálózati kivétel (socket close) után újrapróbál, majd sikerül", async () => {
+test("network error (socket close) after retrying, then returns the successful response", async () => {
   let calls = 0;
   const original = globalThis.fetch;
   (globalThis as any).fetch = async () => {
