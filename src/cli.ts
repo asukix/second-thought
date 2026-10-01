@@ -4,6 +4,7 @@ import { GeminiLlmClient } from "./adapters/gemini-llm";
 import { languagePass } from "./passes/language";
 import { editorialPass } from "./passes/editorial";
 import { errorMessages } from "./error";
+import { toUserMessage } from "./presentation/messages";
 
 async function main() {
   const file = process.argv[2];
@@ -22,7 +23,7 @@ async function main() {
   console.log(`\n${result.findings.length} finding (${result.file}):\n`);
   for (const f of result.findings) {
     const marker = f.severity === "error" ? "✗" : f.severity === "info" ? "○" : "•";
-    console.log(`${marker} [${f.passId}] ${f.category}: ${f.message}`);
+    console.log(`${marker} [${f.passId}] ${f.category}: ${toUserMessage(f)}`);
   }
   if (result.diff) {
     console.log("\n--- DIFF ---\n");

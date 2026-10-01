@@ -6,6 +6,7 @@ import { GeminiLlmClient } from "../src/adapters/gemini-llm";
 import { languagePass } from "../src/passes/language";
 import { editorialPass } from "../src/passes/editorial";
 import type { Severity } from "../src/contract";
+import { toUserMessage } from "../src/presentation/messages";
 
 let diagnostics: vscode.DiagnosticCollection;
 
@@ -31,6 +32,10 @@ export function activate(context: vscode.ExtensionContext) {
       return;
     }
     const doc = editor.document;
+    if (doc.getText().trim() === "") {
+      vscode.window.showInformationMessage("Lektor: empty file, nothing to review.");
+      return;
+    }
     const key = readKey(context);
     if (!key) {
       vscode.window.showErrorMessage("GEMINI_API_KEY nem található a .env-ben.");
@@ -40,14 +45,15 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.window.showInformationMessage("Lektor: review fut...");
     try {
       const llm = new GeminiLlmClient(key);
-      const result = await review(doc.fileName, doc.getText(), llm, [languagePass, editorialPass], 8);
+      const result = await review(doc.fileName, doc.getText(), llm, [languagePass, editorialPass]);
 
       const diags = result.findings.map((f) => {
         const range = new vscode.Range(
           doc.positionAt(f.range.start),
           doc.positionAt(f.range.end)
         );
-        const message = f.suggestion ? `${f.message}\n→ ${f.suggestion}` : f.message;
+        const text = toUserMessage(f);
+        const message = f.suggestion ? `${text}\n→ ${f.suggestion}` : text;
         const severity = toVsSeverity(f.severity);
         const d = new vscode.Diagnostic(range, message, severity);
         d.source = "Lektor";
