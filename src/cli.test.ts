@@ -1,5 +1,5 @@
 import { describe, test, expect } from "bun:test";
-import { mkdtempSync, writeFileSync, rmSync, unlinkSync } from "node:fs";
+import { mkdtempSync, writeFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -29,14 +29,16 @@ describe("CLI (e2e)", () => {
     });
 
     test("empty file → exit 1 with empty message", async () => {
-        const tmp = "content/__e2e_empty__.mdx";
+        // Temp dir instead of content/: the test must not depend on the repo layout.
+        const dir = mkdtempSync(join(tmpdir(), "lektor-"));
+        const tmp = join(dir, "empty.mdx");
         writeFileSync(tmp, "");
         try {
             const { exitCode, stderr } = await runCli([tmp]);
             expect(exitCode).toBe(1);
             expect(stderr).toContain("üres");
         } finally {
-            unlinkSync(tmp); // takarítás, akár bukik a teszt, akár nem
+            rmSync(dir, { recursive: true, force: true }); // cleanup, pass or fail
         }
     });
 
