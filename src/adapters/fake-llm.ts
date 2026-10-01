@@ -1,15 +1,18 @@
-import type { LlmClient } from "../ports/llm";
+import type { LlmClient, LlmResult } from "../ports/llm";
 
-// Hamis LLM: nem hív semmit, mindig ugyanazt a választ adja.
+// Fake LLM: calls nothing, always returns the same successful answer.
 export class FakeLlmClient implements LlmClient {
-  async complete(systemPrompt: string, userText: string): Promise<string> {
-    // Úgy teszünk, mintha az LLM talált volna egy hibát a szövegben.
-    return JSON.stringify([
-      {
-        category: "grammar",
-        message: "Teszt-finding a hamis adaptertől.",
-        suggestion: userText.toUpperCase(),
-      },
-    ]);
+  async complete(systemPrompt: string, userText: string): Promise<LlmResult> {
+    // Pretend the LLM found an issue in the text.
+    return {
+      ok: true,
+      text: JSON.stringify([
+        {
+          category: "grammar",
+          message: "Test finding from the fake adapter.",
+          suggestion: userText.toUpperCase(),
+        },
+      ]),
+    };
   }
 }

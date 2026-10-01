@@ -1,10 +1,13 @@
 import { applyEdits, type Edit } from "./apply";
 import { makeDiff } from "./diff";
 import { protectedRanges, overlapsAny } from "./segmenter";
-import { Category } from "./constants";
-import type { LlmClient } from "./ports/llm";
+import { Category, LlmErrorCategory } from "./constants";
+import type { LlmClient, LlmError, LlmErrorKind } from "./ports/llm";
 import type { ReviewPass } from "./passes/pass";
 import type { ReviewResult, Finding, Range } from "./contract";
+
+// Systemic errors: further LLM calls would fail too, so stop (fail-fast).
+const SYSTEMIC: ReadonlySet<LlmErrorKind> = new Set(["rate-limited", "unavailable", "auth"]);
 
 export async function review(
   file: string,
@@ -40,7 +43,13 @@ export async function review(
 
   const findings: Finding[] = [];
   for (const pass of passes) {
-    findings.push(...(await pass(source, llm)));
+    const outcome = await pass(source, llm);
+    findings.push(...outcome.findings);
+
+    if (outcome.llmError) {
+      findings.push(llmErrorFinding(outcome.llmError));
+      if (SYSTEMIC.has(outcome.llmError.kind)) break;
+    }
   }
 
   const safe = findings.filter(
@@ -55,4 +64,15 @@ export async function review(
     edits.length > 0 ? makeDiff(file, source, applyEdits(source, edits)) : undefined;
 
   return { file, findings: safe, diff };
+}
+
+// Default message comes from the adapter; the presentation layer maps the category to its own wording.
+function llmErrorFinding(error: LlmError): Finding {
+  return {
+    passId: Category.System,
+    range: { start: 0, end: 0 },
+    severity: "error",
+    category: LlmErrorCategory[error.kind],
+    message: error.message,
+  };
 }

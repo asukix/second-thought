@@ -3,6 +3,7 @@ import type { Finding } from "../contract";
 import { segment } from "../segmenter";
 import { extractJson } from "./util";
 import { Category } from "../constants";
+import type { PassOutcome } from "./pass";
 
 const SYSTEM_PROMPT =
   "You are a STRICT English proofreader for a technical blog. " +
@@ -17,20 +18,26 @@ const SYSTEM_PROMPT =
   'Return ONLY a JSON array of {"original","corrected","category","message"}. ' +
   "Empty array if there are no mechanical errors. No prose, no code fences.";
 
+
 export async function languagePass(
   source: string,
   llm: LlmClient
-): Promise<Finding[]> {
+): Promise<PassOutcome> {
   if (source.trim() === "") {
     throw new Error("languagePass: üres bemenet.");
   }
   const segments = segment(source);
   const findings: Finding[] = [];
 
-    for (const seg of segments) {
+  for (const seg of segments) {
+    const result = await llm.complete(SYSTEM_PROMPT, seg.text);
+    if (!result.ok) {
+      // The LLM is not usable: stop and report. review() decides what happens next.
+      return { findings, llmError: result.error };
+    }
+
     try {
-      const raw = await llm.complete(SYSTEM_PROMPT, seg.text);
-      const items = JSON.parse(extractJson(raw)) as Array<{
+      const items = JSON.parse(extractJson(result.text)) as Array<{
         original: string;
         corrected: string;
         category: string;
@@ -65,5 +72,5 @@ export async function languagePass(
     }
   }
 
-  return findings;
+  return { findings };
 }

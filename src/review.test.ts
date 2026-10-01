@@ -5,7 +5,7 @@ import type { Finding } from "./contract";
 import type { LlmClient } from "./ports/llm";
 import { Category } from "./constants";
 
-const dummyLlm: LlmClient = { async complete() { return ""; } };
+const dummyLlm: LlmClient = { async complete() { return { ok: true, text: "" }; } };
 
 const editFinding: Finding = {
   passId: Category.Editorial,
@@ -16,7 +16,7 @@ const editFinding: Finding = {
 };
 
 function fakePass(findings: Finding[]): ReviewPass {
-  return async () => findings;
+  return async () => ({ findings });
 }
 
 describe("review", () => {
@@ -92,5 +92,41 @@ describe("review", () => {
     expect(result.findings[0]!.suggestion).toBe("defined");
     expect(result.diff).toContain("defined");
     expect(result.diff).not.toContain("``let``");
+  });
+
+  test("systemic LLM error: later passes don't run, one system finding", async () => {
+    let secondRan = false;
+    const failing: ReviewPass = async () => ({
+      findings: [],
+      llmError: { kind: "rate-limited", message: "quota" },
+    });
+    const second: ReviewPass = async () => {
+      secondRan = true;
+      return { findings: [] };
+    };
+
+    const result = await review("a.md", "Some prose.", dummyLlm, [failing, second]);
+
+    expect(secondRan).toBe(false);
+    expect(result.findings).toHaveLength(1);
+    expect(result.findings[0]!.passId).toBe("system");
+    expect(result.findings[0]!.category).toBe("llm-rate-limited");
+  });
+
+  test("bad-request is local: later passes still run", async () => {
+    let secondRan = false;
+    const failing: ReviewPass = async () => ({
+      findings: [],
+      llmError: { kind: "bad-request", message: "too large" },
+    });
+    const second: ReviewPass = async () => {
+      secondRan = true;
+      return { findings: [] };
+    };
+
+    const result = await review("a.md", "Some prose.", dummyLlm, [failing, second]);
+
+    expect(secondRan).toBe(true);
+    expect(result.findings[0]!.category).toBe("llm-bad-request");
   });
 });
