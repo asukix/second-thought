@@ -68,8 +68,6 @@ the line ends with `(edit: llm)` or `(edit: sentence)`.
 **Free tier limits:** each file takes two requests, one per pass. On a 429, the client
 backs off and retries, so a large batch gets slower but doesn't fail.
 
-<img width="645" height="269" alt="image" src="https://github.com/user-attachments/assets/b1eceb2c-8786-42d4-a865-83c28ae32001" />
-
 
 ## VS Code extension
 
@@ -99,9 +97,14 @@ in the repository root.
 
 - **Language findings** underline spelling, grammar and punctuation mistakes.
   Put the cursor on one and press `Cmd+.` (`Ctrl+.`) to apply the suggested fix.
+
+  ![Quick fix replacing "thisway:" with "this way:"](docs/images/language-quick-fix.png)
+
 - **Editorial notes** point at structural issues: a missing code example, a buried
   main point, or a rule stated where a trade-off would fit better. They are advice
   only, so they never change your text.
+
+  ![Editorial note questioning the claim that reference types are generally faster](docs/images/editorial-note.png)
 
 ## How it works
 

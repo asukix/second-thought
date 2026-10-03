@@ -34,6 +34,7 @@ Munka-lista. Pipáld/húzd át, amit kész, és írj hozzá bármit. Szabadon sz
 - [ ] Ismétlődő azonos hiba csoportosítása: ha ugyanaz a javítás többször előfordul a cikkben (dogfood: „bult in" → „built-in" következetesen), egy finding „mindet javítja" opcióval — kevesebb zaj
 - [ ] VS Code: a language és az editorial aláhúzás egymásra csúszik (dogfood: draft-TSS „example:"). Opció: editorial `Information` → `Hint` (kevésbé feltűnő, de nem látszik a Problems panelen) — döntés kell
 - [ ] Language prompt hangolás: ne javasoljon opcionális vesszőt, és ne cserélje a brit/amerikai helyesírást (dogfood: „learnt" → „learned", bevezető tagmondat utáni vesszők)
+- [ ] Futás közbeni progress a „review fut...” helyett: melyik passz fut, kész-e, és ha a retry vár (429), mennyit. A mag ne ismerje a frontendet: opcionális `onProgress` callback vagy progress-esemény a `review()`-ból és az adapterből; a VS Code `withProgress`-szel, a CLI stderr-re írja ki
 
 ## Terjesztés / higiénia
 - [ ] git-higiénia: vscode-extension/dist/ + node_modules/ gitignore
