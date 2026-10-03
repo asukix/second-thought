@@ -10,6 +10,9 @@ import { toUserMessage } from "../src/presentation/messages";
 
 let diagnostics: vscode.DiagnosticCollection;
 
+// Diagnostic source: set on every finding and matched by the quick-fix provider.
+const SOURCE = "Second Thought";
+
 function toVsSeverity(severity: Severity): vscode.DiagnosticSeverity {
   switch (severity) {
     case "error":
@@ -22,10 +25,10 @@ function toVsSeverity(severity: Severity): vscode.DiagnosticSeverity {
 }
 
 export function activate(context: vscode.ExtensionContext) {
-  diagnostics = vscode.languages.createDiagnosticCollection("lektor");
+  diagnostics = vscode.languages.createDiagnosticCollection("second-thought");
   context.subscriptions.push(diagnostics);
 
-  const runCmd = vscode.commands.registerCommand("lektor.review", async () => {
+  const runCmd = vscode.commands.registerCommand("secondThought.review", async () => {
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
       vscode.window.showErrorMessage("Nincs megnyitott fájl.");
@@ -33,7 +36,7 @@ export function activate(context: vscode.ExtensionContext) {
     }
     const doc = editor.document;
     if (doc.getText().trim() === "") {
-      vscode.window.showInformationMessage("Lektor: empty file, nothing to review.");
+      vscode.window.showInformationMessage(`${SOURCE}: empty file, nothing to review.`);
       return;
     }
     const key = readKey(context);
@@ -42,7 +45,7 @@ export function activate(context: vscode.ExtensionContext) {
       return;
     }
 
-    vscode.window.showInformationMessage("Lektor: review fut...");
+    vscode.window.showInformationMessage(`${SOURCE}: review fut...`);
     try {
       const llm = new GeminiLlmClient(key);
       const result = await review(doc.fileName, doc.getText(), llm, [languagePass, editorialPass]);
@@ -56,15 +59,15 @@ export function activate(context: vscode.ExtensionContext) {
         const message = f.suggestion ? `${text}\n→ ${f.suggestion}` : text;
         const severity = toVsSeverity(f.severity);
         const d = new vscode.Diagnostic(range, message, severity);
-        d.source = "Lektor";
+        d.source = SOURCE;
         (d as any).suggestion = f.suggestion; // a provider innen veszi
         return d;
       });
 
       diagnostics.set(doc.uri, diags);
-      vscode.window.showInformationMessage(`Lektor: ${diags.length} finding.`);
+      vscode.window.showInformationMessage(`${SOURCE}: ${diags.length} finding.`);
     } catch (err) {
-      vscode.window.showErrorMessage(`Lektor hiba: ${err}`);
+      vscode.window.showErrorMessage(`${SOURCE} hiba: ${err}`);
     }
   });
   context.subscriptions.push(runCmd);
@@ -72,7 +75,7 @@ export function activate(context: vscode.ExtensionContext) {
   // A quick-fix provider: apply the suggestion from the diagnostic
   const fixProvider = vscode.languages.registerCodeActionsProvider(
     [{ language: "markdown" }, { language: "mdx" }],
-    new LektorFixProvider(),
+    new SecondThoughtFixProvider(),
     { providedCodeActionKinds: [vscode.CodeActionKind.QuickFix] }
   );
   context.subscriptions.push(fixProvider);
@@ -81,10 +84,10 @@ export function activate(context: vscode.ExtensionContext) {
 // The quick-fix title shows the actual change (original → suggestion), shortened with "…".
 function quickFixTitle(original: string, suggestion: string): string {
   const short = (s: string) => (s.length > 40 ? s.slice(0, 39) + "…" : s);
-  return `Lektor: "${short(original)}" → "${short(suggestion)}"`;
+  return `${SOURCE}: "${short(original)}" → "${short(suggestion)}"`;
 }
 
-class LektorFixProvider implements vscode.CodeActionProvider {
+class SecondThoughtFixProvider implements vscode.CodeActionProvider {
   provideCodeActions(
     document: vscode.TextDocument,
     _range: vscode.Range | vscode.Selection,
@@ -92,7 +95,7 @@ class LektorFixProvider implements vscode.CodeActionProvider {
   ): vscode.CodeAction[] {
     const actions: vscode.CodeAction[] = [];
     for (const diag of context.diagnostics) {
-      if (diag.source !== "Lektor") continue;
+      if (diag.source !== SOURCE) continue;
       const suggestion = (diag as any).suggestion as string | undefined;
       if (!suggestion) continue;
 

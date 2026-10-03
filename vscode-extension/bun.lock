@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "lektor-vscode",
+      "name": "second-thought-vscode",
       "devDependencies": {
         "esbuild": "^0.28.2",
       },

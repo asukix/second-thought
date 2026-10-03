@@ -30,7 +30,7 @@ describe("CLI (e2e)", () => {
 
     test("empty file → exit 1 with empty message", async () => {
         // Temp dir instead of content/: the test must not depend on the repo layout.
-        const dir = mkdtempSync(join(tmpdir(), "lektor-"));
+        const dir = mkdtempSync(join(tmpdir(), "second-thought-"));
         const tmp = join(dir, "empty.mdx");
         writeFileSync(tmp, "");
         try {
@@ -44,7 +44,7 @@ describe("CLI (e2e)", () => {
 
     test("missing API key → exit 1 with key message", async () => {
         // ideiglenes mappa, benne egy valódi (nem üres) cikk, DE nincs .env
-        const dir = mkdtempSync(join(tmpdir(), "lektor-"));
+        const dir = mkdtempSync(join(tmpdir(), "second-thought-"));
         const file = join(dir, "article.mdx");
         writeFileSync(file, "Some real prose here.");
         const cliPath = join(process.cwd(), "src", "cli.ts");

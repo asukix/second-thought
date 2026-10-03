@@ -1,13 +1,13 @@
 {
-  "name": "lektor-vscode",
-  "displayName": "Lektor",
+  "name": "second-thought-vscode",
+  "displayName": "Second Thought",
   "version": "0.0.1",
   "private": true,
   "engines": { "vscode": "^1.85.0" },
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
-      { "command": "lektor.review", "title": "Lektor: Review Current File" }
+      { "command": "secondThought.review", "title": "Second Thought: Review Current File" }
     ]
   },
   "scripts": {

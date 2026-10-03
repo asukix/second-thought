@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "lektor",
+      "name": "second-thought",
       "dependencies": {
         "@types/diff": "^8.0.0",
         "diff": "^9.0.0",
