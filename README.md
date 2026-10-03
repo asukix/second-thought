@@ -9,9 +9,17 @@ An opinionated review harness for MDX writing.
 
 ## Status
 
-Second-thought is a lektor tool to help myself writing bolog posts, deep bits, thinking bits and thinking articles.
-Currently it handles standard md and my plan to handle my own mdx format as well.
-It contains 2 AI assistant: language lektor and editoral lektor.
+Second Thought is a personal tool: I built it to review my own blog posts, thinking articles, deep bits and thinking bits.
+It works on standard Markdown (`.md`) today. Support for my **own MDX** components **is planned**.
+
+It runs two AI passes, both on Gemini's free tier:
+
+- a **language pass** for spelling, grammar and punctuation, with suggested fixes
+  (I may replace this with a rule-based, non-AI checker later)
+- an **editorial pass** for structure and argument, with notes only
+
+**The AI doesn't write for you.** It points out issues and suggests fixes,
+and nothing in your file changes until you accept it.
 
 ## Quick start
 
@@ -62,21 +70,35 @@ backs off and retries, so a large batch gets slower but doesn't fail.
 
 ## VS Code extension
 
-VS Code extension part helps to run and use the tool directly from the VS Code.
-### Steps to use
-- Build the tool:
-```bash
-git vscode-extension
-bun run build
-```
-- Open the project's vscode-extensions folder from VS Code
-- Press F5 - The project will run
-- Open your article that you want to analyse
-- Open the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`) and run the tool: 
-  `>Second Thought: ReviewCurrentFile`
+The extension runs the same review inside VS Code: findings show up as underlines
+and in the Problems panel, and language fixes can be applied with one click.
 
-The languge modul will underline the spellings and the language mismatches. It also offers fixes.
-The editoral modul will underline the thoughts if you forget the code example, or it mismatch your way
+### Steps to use
+
+1. Install and build the extension:
+
+```bash
+   cd vscode-extension
+   bun install
+   bun run build
+```
+
+2. Open the `vscode-extension` folder in VS Code and press `F5`.
+   A new window opens with `[Extension Development Host]` in its title.
+3. In that new window, open the article you want to review.
+4. Open the Command Palette (`Cmd+Shift+P` / `Ctrl+Shift+P`) and run
+   **Second Thought: Review Current File**.
+
+The extension reads `GEMINI_API_KEY` from the same `.env` file as the CLI,
+in the repository root.
+
+### What you see
+
+- **Language findings** underline spelling, grammar and punctuation mistakes.
+  Put the cursor on one and press `Cmd+.` (`Ctrl+.`) to apply the suggested fix.
+- **Editorial notes** point at structural issues: a missing code example, a buried
+  main point, or a rule stated where a trade-off would fit better. They are advice
+  only, so they never change your text.
 
 ## How it works
 
