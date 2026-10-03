@@ -4,7 +4,6 @@ import remarkFrontmatter from "remark-frontmatter";
 import remarkMdx from "remark-mdx";
 import type { Range } from "./contract";
 
-// Egy lektorálható blokk: a szövege + hol van az eredetiben.
 export interface Segment {
   text: string;
   range: Range;
