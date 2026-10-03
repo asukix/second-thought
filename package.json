@@ -1,5 +1,6 @@
 {
   "name": "second-thought",
+  "license": "MIT",
   "type": "module",
   "private": true,
   "scripts": {
