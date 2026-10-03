@@ -68,6 +68,9 @@ the line ends with `(edit: llm)` or `(edit: sentence)`.
 **Free tier limits:** each file takes two requests, one per pass. On a 429, the client
 backs off and retries, so a large batch gets slower but doesn't fail.
 
+<img width="645" height="269" alt="image" src="https://github.com/user-attachments/assets/b1eceb2c-8786-42d4-a865-83c28ae32001" />
+
+
 ## VS Code extension
 
 The extension runs the same review inside VS Code: findings show up as underlines
