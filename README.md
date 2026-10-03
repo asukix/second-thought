@@ -1,4 +1,4 @@
-# Second Thought
+# Second-Thought
 
 An opinionated review harness for MDX writing.
 
@@ -113,7 +113,31 @@ in the repository root.
 
 ## Testing
 
-<!-- bun test; mit fed le röviden; SECOND_THOUGHT_LIVE=1 az élő smoke-hoz. -->
+```bash
+bun test
+```
+
+The default suite needs no API key and no network: the LLM is replaced by a fake,
+and so is `fetch` in the adapter tests. The whole suite runs in well under a second.
+
+### Test pyramid
+
+**Unit tests:**
+
+- the segmenter: prose extraction, protected ranges, a byte-for-byte round-trip
+- edit narrowing and applying
+- JSON extraction from LLM replies
+- both passes against a fake LLM
+- the Gemini adapter: retry and backoff, error mapping, and that the raw vendor response never leaks past the port
+- the user-facing messages
+
+**Integration tests:** `review()` with fake passes: diff building, the parse guard,
+dropping edits inside protected ranges, and failing fast on systemic LLM errors.
+
+**End-to-end tests:** the CLI spawned as a real process, covering its error paths.
+
+A live smoke test against Gemini is skipped by default, because it uses your quota.
+Run it with `SECOND_THOUGHT_LIVE=1 bun test`.
 
 ## Roadmap
 
