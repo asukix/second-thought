@@ -1,5 +1,8 @@
 export type PassId = "language" | "editorial" | "system";
 export type Severity = "info" | "warning" | "error";
+// How precisely a suggested edit was narrowed: the computed minimal change, the LLM's own
+// narrowing, or the whole sentence (last resort). Absent for findings without an edit.
+export type EditPrecision = "minimal" | "llm" | "sentence";
 
 export interface ReviewRequest {
     file: string;
@@ -19,6 +22,7 @@ export interface Finding {
     category: string;
     message: string;
     suggestion?: string;
+    editPrecision?: EditPrecision;
 }
 
 export interface ReviewResult {

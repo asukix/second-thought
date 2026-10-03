@@ -78,6 +78,12 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(fixProvider);
 }
 
+// The quick-fix title shows the actual change (original → suggestion), shortened with "…".
+function quickFixTitle(original: string, suggestion: string): string {
+  const short = (s: string) => (s.length > 40 ? s.slice(0, 39) + "…" : s);
+  return `Lektor: "${short(original)}" → "${short(suggestion)}"`;
+}
+
 class LektorFixProvider implements vscode.CodeActionProvider {
   provideCodeActions(
     document: vscode.TextDocument,
@@ -91,7 +97,7 @@ class LektorFixProvider implements vscode.CodeActionProvider {
       if (!suggestion) continue;
 
       const action = new vscode.CodeAction(
-        `Lektor: elfogad — "${suggestion.slice(0, 40)}"`,
+        quickFixTitle(document.getText(diag.range), suggestion),
         vscode.CodeActionKind.QuickFix
       );
       action.diagnostics = [diag];

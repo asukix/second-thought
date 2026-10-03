@@ -23,7 +23,9 @@ async function main() {
   console.log(`\n${result.findings.length} finding (${result.file}):\n`);
   for (const f of result.findings) {
     const marker = f.severity === "error" ? "✗" : f.severity === "info" ? "○" : "•";
-    console.log(`${marker} [${f.passId}] ${f.category}: ${toUserMessage(f)}`);
+    // Fallback precision is shown, so a non-minimal edit never goes unnoticed.
+    const precision = f.editPrecision && f.editPrecision !== "minimal" ? ` (edit: ${f.editPrecision})` : "";
+    console.log(`${marker} [${f.passId}] ${f.category}: ${toUserMessage(f)}${precision}`);
   }
   if (result.diff) {
     console.log("\n--- DIFF ---\n");
