@@ -1,44 +1,49 @@
 # Second Thought — backlog
 
-Munka-lista. Pipáld/húzd át, amit kész, és írj hozzá bármit. Szabadon szerkeszd.
+Working list. Tick off what's done and add notes freely.
 
-## Fontos (mentori session előtt)
-- [ ] Láthatóság / projekt-áttekintés (főleg én építem): hol tart a projekt, mit és hogyan csinál, milyen tapasztalatok jöttek a dogfoodból — a README-hez kapcsolva, a mentori sessionön bemutatható formában
-- [x] Átnevezés: **Second Thought** — alcím: „an opinionated review harness for MDX writing". npm: `second-thought` (szabad), CLI-parancs rövid névvel (`2t` / `sth`). Érinti: repo + `package.json` név, CLI, VS Code extension név + parancsazonosítók (`lektor.review`), diagnosztika forrás („Lektor"), felhasználói szövegek, progress doksi, projekt-utasítások — egy külön commitban
-- [ ] Bemutató a weboldalon: a projekt a `projects` oldal alá (astrofy: `src/pages/projects.astro`), saját bemutató oldallal, README-vel és példákkal. Példa-anyag a dogfoodból: post-001 thread-safety finding, „give" → „would give" szűkítés, barátságos 429-üzenet a nyers JSON helyett, előtte/utána diffek
+## Important (before the mentor session)
+- [ ] Visibility / project overview (mostly built by me): where the project stands, what it does and how, what the dogfooding taught me — linked from the README, in a form I can present at the mentor session
+- [x] Rename to **Second Thought** — subtitle: "an opinionated review harness for MDX writing". npm: `second-thought` (available), short CLI command (`2t` / `sth`). Affects: repo + `package.json` name, CLI, VS Code extension name + command ids (`lektor.review`), diagnostic source ("Lektor"), user-facing text, progress doc, project instructions — in a separate commit
+- [ ] Project page on the website: under the `projects` page (astrofy: `src/pages/projects.astro`), with its own page, the README and examples. Examples from the dogfooding: the post-001 thread-safety finding, the "give" → "would give" narrowing, the friendly 429 message instead of raw JSON, before/after diffs
 
-## Tesztek (cél: piramis a mentori sessionig)
-- [x] Unit: applyEdits (drift, duplikátum, insert/delete, no-op)
-- [x] Unit: segment round-trip (próza kijön, frontmatter/kód sértetlen, range-ek)
-- [x] Unit: extractJson (kerítéses vs. sima JSON)
-- [x] Unit: passzok parse/pozíció-logika FakeLlmClienttel
-- [x] Integráció: review() fake passzal → teljes lánc → ReviewResult
-- [x] E2E: CLI spawn egy fixture-cikken (kimenet + exit-kód)
-- [x] E2E (opc.): élő-LLM smoke, env-flag mögött
+## Tests (goal: a test pyramid by the mentor session)
+- [x] Unit: applyEdits (drift, duplicates, insert/delete, no-op)
+- [x] Unit: segment round-trip (prose extracted, frontmatter/code intact, ranges)
+- [x] Unit: extractJson (fenced vs. plain JSON)
+- [x] Unit: pass parsing/position logic with FakeLlmClient
+- [x] Integration: review() with a fake pass → full chain → ReviewResult
+- [x] E2E: CLI spawned on a fixture article (output + exit code)
+- [x] E2E (optional): live LLM smoke test behind an env flag
 
-## Képességek
-- [ ] Technical fact-check persona (advisory + bizonyíték: snippet/szimbólum/groundingos URL)
-- [ ] Konfigurálható personák / prompt-mint-adat
-- [ ] Persona tartalomtípusonként (blog / thinking article / deep bit): az editorial most mindenre iOS/architektúra mércét alkalmaz (dogfood: draft-TSS „holiday planning rather than a software architecture problem")
-- [ ] Változás-vizsgálat (VersionSource port + git)
-- [ ] Retext-alapú LanguageCheckPass (alternatíva)
+## Capabilities
+- [ ] Code-aware editorial pass: send placeholders for code blocks (e.g. `[code block: swift, 42 lines]`), so it stops asking for examples that are already there (dogfood: "missing example")
+- [ ] Support for my own MDX components (`<Image>`, imports) in the segmenter
+- [ ] Technical fact-check persona (advisory + evidence: snippet / symbol / grounded URL)
+- [ ] Configurable personas / prompts as data
+- [ ] Persona per content type (blog / thinking article / deep bit): the editorial pass currently applies an iOS/architecture standard to everything (dogfood: draft-TSS "holiday planning rather than a software architecture problem")
+- [ ] Change review (VersionSource port + git)
+- [ ] Retext-based LanguageCheckPass (rule-based alternative)
 
-## Csiszolás / megbízhatóság
-- [ ] Re-validate apply után (MDX compile)
-- [ ] VS Code: re-run on save, SecretStorage-kulcs, stale-diagnostika frissítés
-- [ ] JSON kimeneti mód a CLI-nek
-- [ ] Átfedő range-ek kezelése az apply-ban
-- [ ] Frontmatterbe ágyazott próza
-- [ ] Frontmatter kijelölt mezőinek (title/description/alt) óvatos lektorálása — a legsűrűbb nyelvi hibák ott ülnek (dogfood-tanulság)
-- [ ] Szegmentáló: csupasz HTML-tag tolerancia (pl. lezáratlan `<br>`) — most parse-error findinggé szelídül, de a próza elérhetetlen (dogfood: bit-004)
-- [ ] Ismétlődő azonos hiba csoportosítása: ha ugyanaz a javítás többször előfordul a cikkben (dogfood: „bult in" → „built-in" következetesen), egy finding „mindet javítja" opcióval — kevesebb zaj
-- [ ] VS Code: a language és az editorial aláhúzás egymásra csúszik (dogfood: draft-TSS „example:"). Opció: editorial `Information` → `Hint` (kevésbé feltűnő, de nem látszik a Problems panelen) — döntés kell
-- [ ] Language prompt hangolás: ne javasoljon opcionális vesszőt, és ne cserélje a brit/amerikai helyesírást (dogfood: „learnt" → „learned", bevezető tagmondat utáni vesszők)
-- [ ] Futás közbeni progress a „review fut...” helyett: melyik passz fut, kész-e, és ha a retry vár (429), mennyit. A mag ne ismerje a frontendet: opcionális `onProgress` callback vagy progress-esemény a `review()`-ból és az adapterből; a VS Code `withProgress`-szel, a CLI stderr-re írja ki
+## Polish / reliability
+- [ ] Re-validate after apply (MDX compile)
+- [ ] VS Code: re-run on save, key in SecretStorage, refresh stale diagnostics
+- [ ] JSON output mode for the CLI
+- [ ] Handle overlapping ranges in apply
+- [ ] Prose embedded in frontmatter
+- [ ] Careful review of selected frontmatter fields (title/description/alt) — that's where the densest language errors sit (dogfood lesson)
+- [ ] Segmenter: tolerate bare HTML tags (e.g. an unclosed `<br>`) — today it becomes a parse-error finding, but the prose is unreachable (dogfood: bit-004)
+- [ ] Group repeated identical errors: if the same fix occurs several times in an article (dogfood: "bult in" → "built-in" consistently), one finding with a "fix all" option — less noise
+- [ ] VS Code: language and editorial underlines overlap (dogfood: draft-TSS "example:"). Option: editorial `Information` → `Hint` (less prominent, but not shown in the Problems panel) — needs a decision
+- [ ] Language prompt tuning: don't suggest optional commas, and don't swap British/American spelling (dogfood: "learnt" → "learned", commas after introductory clauses)
+- [ ] Progress while running instead of "review fut...": which pass is running, whether it's done, and how long a retry (429) is waiting. The core must not know the frontend: an optional `onProgress` callback or progress events from `review()` and the adapter; VS Code shows it with `withProgress`, the CLI writes it to stderr
+- [ ] User-facing CLI and extension text in English (some messages are still Hungarian, e.g. "Nincs alkalmazható javaslat.", "Hiba: …")
 
-## Terjesztés / higiénia
-- [ ] git-higiénia: vscode-extension/dist/ + node_modules/ gitignore
-- [ ] Push GitHubra (remote; munkanév: porygon)
-- [ ] README (mit csinál, architektúra, futtatás)
-- [ ] Rövid CLI-parancs (`2t` / `sth`) `bin` mezővel — az átnevezésből kimaradt, mert új funkció, nem név
-- [ ] Swift shell (7. mérföldkő)
+## Distribution / hygiene
+- [x] Git hygiene: vscode-extension/dist/ + node_modules/ in .gitignore
+- [x] Push to GitHub: https://github.com/asukix/second-thought (MIT, public)
+- [ ] README (what it does, architecture, how to run)
+- [ ] `vscode-extension/package.json`: declare `esbuild` as a devDependency (it's only in the lockfile, so a fresh clone can't build)
+- [ ] Move the dev scripts (`explore.ts`, `list-models.ts`) to `scripts/` or remove them
+- [ ] Short CLI command (`2t` / `sth`) via the `bin` field — left out of the rename because it's a new feature, not a name
+- [ ] Swift shell (milestone 7)
