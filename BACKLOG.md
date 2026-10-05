@@ -22,6 +22,8 @@ Working list. Tick off what's done and add notes freely.
 - [ ] Technical fact-check persona (advisory + evidence: snippet / symbol / grounded URL)
 - [ ] Configurable personas / prompts as data
 - [ ] Persona per content type (blog / thinking article / deep bit): the editorial pass currently applies an iOS/architecture standard to everything (dogfood: draft-TSS "holiday planning rather than a software architecture problem")
+  - Automatic selection by a deterministic rule, not by asking the LLM. Preferred source: a new frontmatter field (e.g. `type: deep-bit`) — explicit and travels with the file; the core already parses frontmatter, so reading it can stay a pure function. Alternative: folder name (`blog/`, `deep-bits/`) — no new field, but implicit and tied to the blog layout. Not `tags`: they serve a different purpose
+  - Open questions: what happens without a type (default persona, info finding, or error)? Which source wins if both exist and disagree? Where does the type → persona mapping live (code or config; see "prompts as data")?
 - [ ] Change review (VersionSource port + git)
 - [ ] Retext-based LanguageCheckPass (rule-based alternative)
 
