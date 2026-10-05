@@ -1,4 +1,4 @@
-# Second-Thought
+# Second Thought
 
 An opinionated review harness for MDX writing.
 
@@ -108,14 +108,35 @@ in the repository root.
 
 ## How it works
 
-<!-- A mechanizmus, nem a miért: parse → protected ranges → passes → guard → diff.
-     5-6 sor vagy egy kis ábra. Link a projektoldalra a döntésekhez. -->
+Second Thought is a harness around the LLM: only the passes communicate with it, everything else is plain code.
+A review has the next steps:
+
+1. **Parse.** The file is parsed into a syntax tree (unified + remark, with MDX and frontmatter support).
+   If it can't be parsed, you get a single error finding instead of a crash.
+2. **Segment.** The prose of the article is extracted together with its exact position in the file.
+   Frontmatter, code blocks, inline code, JSX and imports are recorded as **protected ranges**.
+3. **Review.** Each pass sends only the prose to the LLM.
+   - The *language pass* gets back corrected sentences, and each fix is narrowed to the words that
+     actually changed. For example, the underline covers `thisway`, not the whole sentence.
+   - The *editorial pass* reads all the prose at once and returns notes, each anchored to a short quote.
+4. **Guard.** Any suggestion that overlaps a protected range is dropped, whichever pass produced it.
+5. **Diff.** The remaining suggestions are shown as a unified diff. Your file is not touched.
+
+If the LLM fails in a way that would affect every request (quota, invalid key, outage), sthe remaining passes are skipped and you get one readable error instead of a list of failures.
+
+<!-- Link a projektoldalra, ha elkészül: "Why it is built this way: [project page](...)" -->
 
 ## Project structure
 
-<!-- src/ fa, soronként egy szerep: contract, segmenter, review (Context),
-     passes (Strategy), ports, adapters, presentation, cli. Ez mutatja meg
-     a hexagonális felépítést kódszinten. -->
+| Layer | Where | What it does |
+|---|---|---|
+| Core | `src/*.ts`, `src/passes/` | the pass interface, the passes, parsing, guard, diff; no I/O |
+| Port | `src/ports/` | the `LlmClient` interface the core depends on |
+| Adapters | `src/adapters/` | Gemini (HTTP, retry, error translation) and a fake for tests |
+| Frontends | `src/cli.ts`, `vscode-extension/`, `src/presentation/` | entry points and user-facing text |
+
+Dependencies point inward: adapters and frontends import the core, never the other way around.
+The core knows nothing about Gemini, the terminal or VS Code, so a future Swift app can reuse it.
 
 ## Testing
 
@@ -147,8 +168,17 @@ Run it with `SECOND_THOUGHT_LIVE=1 bun test`.
 
 ## Roadmap
 
-<!-- 3-4 tétel (placeholderek, MDX-támogatás, persona per tartalomtípus, Swift app),
-     a többi: link a BACKLOG.md-re. -->
+A few of the next steps. The full list is in [BACKLOG.md](BACKLOG.md).
+
+- **Code-aware editorial pass.** The editorial pass doesn't see code blocks yet, so it sometimes
+  asks for an example that is already there. Next step: send short placeholders instead
+  (for example `[code block: swift, 42 lines]`).
+- **MDX components.** Support for my own components (such as `<Image>`) in the segmenter.
+- **Personas per content type.** Blog posts, thinking articles and deep bits need different
+  editorial standards.
+- **Technical fact-check pass.** The editorial pass already catches some wrong technical claims,
+  but only as a side effect. A dedicated pass would check them on purpose and back each note
+  with evidence: a code snippet, an API symbol or a source link.
 
 ## License
 
